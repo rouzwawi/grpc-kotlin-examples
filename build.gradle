@@ -1,0 +1,94 @@
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
+apply plugin: 'kotlin'
+apply plugin: 'application'
+
+buildscript {
+    ext.kotlin_version = '1.2.71'
+    ext.grpc_version = '1.15.1'
+    ext.protobuf_version = '3.5.1'
+    ext.protobuf_gradle_version = '0.8.6'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.google.protobuf:protobuf-gradle-plugin:$protobuf_gradle_version"
+    }
+}
+
+mainClassName = 'com.spotify.simplekotrinstandalone.GrpcServer'
+
+group = 'com.spotify'
+version = '1.0-SNAPSHOT'
+
+description = """"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://artifactory.spotify.net/artifactory/libs-release" }
+    maven { url "https://artifactory.spotify.net/artifactory/libs-snapshot" }
+}
+
+dependencies {
+    compile group: 'io.grpc', name: 'grpc-all', version: "$grpc_version"
+    compile group: 'io.grpc', name: 'grpc-protobuf', version: "$grpc_version"
+    compile group: 'io.grpc', name: 'grpc-stub', version: "$grpc_version"
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: "$kotlin_version"
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: "$kotlin_version"
+    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: "$kotlin_version"
+}
+
+//sourceSets {
+//  main {
+//    proto {
+//      // In addition to the default 'src/main/proto'
+//      srcDir 'main'
+//      // In addition to the default '**/*.proto' (use with caution).
+//      // Using an extension other than 'proto' is NOT recommended,
+//      // because when proto files are published along with class files, we can
+//      // only tell the type of a file from its extension.
+//      include '**/*.protodevel'
+//    }
+//  }
+//  test {
+//    proto {
+//      // In addition to the default 'src/test/proto'
+//      srcDir 'src/test/protocolbuffers'
+//    }
+//  }
+//}
+
+protobuf {
+    protoc {
+        // The artifact spec for the Protobuf Compiler
+        artifact = "com.google.protobuf:protoc:$protobuf_version"
+        // path = '/usr/local/bin/protoc'
+    }
+    plugins {
+        // Optional: an artifact spec for a protoc plugin, with "grpc" as
+        // the identifier, which can be referred to in the "plugins"
+        // container of the "generateProtoTasks" closure.
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.0.0-pre2'
+        }
+    }
+    generateProtoTasks {
+        ofSourceSet('main')*.plugins {
+            // Apply the "grpc" plugin whose spec is defined above, without
+            // options.  Note the braces cannot be omitted, otherwise the
+            // plugin will not be added. This is because of the implicit way
+            // NamedDomainObjectContainer binds the methods.
+            grpc {}
+        }
+    }
+}

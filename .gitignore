@@ -23,3 +23,9 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### Gradle ###
+gradle
+gradlew
+gradlew.bat
+.gradle
