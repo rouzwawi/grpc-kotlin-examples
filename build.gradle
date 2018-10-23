@@ -43,6 +43,7 @@ dependencies {
     compile group: 'io.grpc', name: 'grpc-all', version: "$grpc_version"
     compile group: 'io.grpc', name: 'grpc-protobuf', version: "$grpc_version"
     compile group: 'io.grpc', name: 'grpc-stub', version: "$grpc_version"
+    compile group: 'io.grpc', name: 'grpc-services', version: "$grpc_version"
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: "$kotlin_version"
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: "$kotlin_version"
     testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: "$kotlin_version"
