@@ -1,19 +1,20 @@
 package com.spotify.simplekotlinstandalone
 
 import io.grpc.stub.StreamObserver
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
 import services.UserRequest
 import services.UserResponse
-import services.UserServiceGrpc.UserServiceImplBase
-
-//class UserService(keyValue: KeyValueServiceBlockingStub) : UserServiceImplBase() {
+import services.UserServiceGrpcKt.UserServiceImplBase
+import kotlin.coroutines.experimental.EmptyCoroutineContext
 
 class UserService : UserServiceImplBase() {
-  //    private val keyValue = Preconditions.checkNotNull(keyValue)
-//
-  override fun getUser(request: UserRequest, responseObserver: StreamObserver<UserResponse>) {
+
+  /* override */ fun getUserOld(request: UserRequest, responseObserver: StreamObserver<UserResponse>) {
     val response = UserResponse
         .newBuilder()
-        .setName(request?.name ?: throw IllegalArgumentException("name can not be null"))
+        .setName(request.name ?: throw IllegalArgumentException("name can not be null"))
         .setEmailAddress("email")
         .setCountry("country")
         .setActive(true)
@@ -21,5 +22,15 @@ class UserService : UserServiceImplBase() {
 
     responseObserver.onNext(response)
     responseObserver.onCompleted()
+  }
+
+  override fun getUser(request: UserRequest): Deferred<UserResponse> = CoroutineScope(EmptyCoroutineContext).async {
+    UserResponse
+        .newBuilder()
+        .setName(request.name ?: throw IllegalArgumentException("name can not be null"))
+        .setEmailAddress("email")
+        .setCountry("country")
+        .setActive(true)
+        .build()
   }
 }
