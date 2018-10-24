@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package services;
 
+import "google/protobuf/timestamp.proto";
+
 option java_multiple_files = true;
 option java_package = "services";
 option java_outer_classname = "UserServiceProtos";
@@ -21,4 +23,19 @@ message UserResponse {
     string emailAddress = 2;
     bool active = 3;
     string country = 4;
+}
+
+
+service ChatService {
+    rpc chat(stream ChatMessage) returns (stream ChatMessageFromService);
+}
+
+message ChatMessage {
+    string from = 1;
+    string message = 2;
+}
+
+message ChatMessageFromService {
+    google.protobuf.Timestamp timestamp = 1;
+    ChatMessage message = 2;
 }

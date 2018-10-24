@@ -1,8 +1,8 @@
 package com.spotify.simplekotlinstandalone
 
 import io.grpc.stub.StreamObserver
-import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import services.UserRequest
 import services.UserResponse
@@ -24,7 +24,7 @@ class UserService : UserServiceImplBase() {
     responseObserver.onCompleted()
   }
 
-  override fun getUser(request: UserRequest): Deferred<UserResponse> = CoroutineScope(EmptyCoroutineContext).async {
+  override fun getUser(request: UserRequest): Deferred<UserResponse> = GlobalScope.async {
     UserResponse
         .newBuilder()
         .setName(request.name ?: throw IllegalArgumentException("name can not be null"))
