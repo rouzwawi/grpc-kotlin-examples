@@ -11,20 +11,18 @@ fun main(args: Array<String>) {
       .addService(UserService())
       .addService(chatService)
       .build()
-  server.start()
 
-  println("User service started")
+  Runtime.getRuntime().addShutdownHook(Thread {
+    println("Ups, JVM shutdown")
 
-  Runtime.getRuntime().addShutdownHook(Thread { println("Ups, JVM shutdown") })
-
-  try {
-    // Only so you can kill the service easily...
-    readLine()
-  } finally {
-    chatService.kill()
+    chatService.shutdown()
     server.shutdown()
     server.awaitTermination()
 
     println("User service stopped")
-  }
+  })
+
+  server.start()
+  println("User service started")
+  server.awaitTermination()
 }
