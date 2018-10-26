@@ -160,7 +160,7 @@
                             <id>GrpcKotlinGenerator</id>
                             <groupId>io.rouz</groupId>
                             <artifactId>grpc-kotlin-gen</artifactId>
-                            <version>0.0.3</version>
+                            <version>0.0.4</version>
                             <mainClass>io.rouz.grpc.kotlin.GrpcKotlinGenerator</mainClass>
                         </protocPlugin>
                     </protocPlugins>

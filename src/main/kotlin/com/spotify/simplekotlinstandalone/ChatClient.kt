@@ -22,7 +22,7 @@ fun chatClient() = runBlocking {
 
   launch(Dispatchers.Default) {
     try {
-      for (responseMessage in chat.response) {
+      for (responseMessage in chat) {
         println(responseMessage)
       }
       println("Server disconnected")
@@ -37,12 +37,12 @@ fun chatClient() = runBlocking {
       val from = readLine()
       print("Message: ")
       val message = readLine()
-      chat.request.send(ChatMessage.newBuilder()
+      chat.send(ChatMessage.newBuilder()
           .setFrom(from)
           .setMessage(message)
           .build())
     }
   } finally {
-    chat.request.close()
+    chat.close()
   }
 }

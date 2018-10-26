@@ -2,11 +2,7 @@ package com.spotify.simplekotlinstandalone
 
 import com.google.protobuf.Timestamp
 import io.grpc.Status
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.SendChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.experimental.channels.*
 import services.ChatMessage
 import services.ChatMessageFromService
 import services.ChatServiceGrpcKt
@@ -15,8 +11,7 @@ import services.ChatServiceGrpcKt
 class ChatService : ChatServiceGrpcKt.ChatServiceImplBase() {
   private val clientChannels = LinkedHashSet<SendChannel<ChatMessageFromService>>()
 
-  override fun chat(requestChannel: ReceiveChannel<ChatMessage>):
-      ReceiveChannel<ChatMessageFromService> = GlobalScope.produce {
+  override suspend fun ProducerScope<ChatMessageFromService>.chat(requestChannel: ReceiveChannel<services.ChatMessage>) {
     println("New client connection: $channel")
     clientChannels.add(channel)
     channel.invokeOnClose {
@@ -25,7 +20,8 @@ class ChatService : ChatServiceGrpcKt.ChatServiceImplBase() {
 
     try {
       requestChannel.consumeEach { chatMessage ->
-        println("Got request from $requestChannel: $chatMessage")
+        println("Got request from $requestChannel:")
+        println(chatMessage)
         val message = createMessage(chatMessage)
         clientChannels.forEach { clientChannel ->
           println("Sending to $clientChannel")
@@ -33,6 +29,7 @@ class ChatService : ChatServiceGrpcKt.ChatServiceImplBase() {
         }
       }
     } catch (t: Throwable) {
+      println("Threw $t")
       if (Status.fromThrowable(t).code != Status.Code.CANCELLED) {
         println("An actual error occurred")
         t.printStackTrace()
