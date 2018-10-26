@@ -1,5 +1,8 @@
 package com.spotify.simplekotlinstandalone
 
+import com.spotify.grpc.LoggingClientInterceptor
+import com.spotify.grpc.metric.semantic.SemanticMetricClientInterceptor
+import com.spotify.metrics.core.SemanticMetricRegistry
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.launch
@@ -12,12 +15,20 @@ fun main(args: Array<String>) {
 }
 
 fun chatClient() = runBlocking {
+  val registry = SemanticMetricRegistry()
+
   val channel = ManagedChannelBuilder
       .forAddress("localhost", 15001)
+      .enableFullStreamDecompression()
+//      .nameResolverFactory(NamelessNameResolverProvider())
+      .intercept(SemanticMetricClientInterceptor(registry))
+      .intercept(LoggingClientInterceptor())
       .usePlaintext()
       .build()
 
-  val chatService = ChatServiceGrpcKt.newStub(channel)
+  val chatService = ChatServiceGrpcKt
+      .newStub(channel)
+      .withCompression("gzip")
   val chat = chatService.chat()
 
   launch(Dispatchers.Default) {

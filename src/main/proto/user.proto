@@ -9,7 +9,7 @@ option java_package = "services";
 option java_outer_classname = "UserServiceProtos";
 
 service UserService {
-    rpc getUser(UserRequest) returns (UserResponse) {}
+    rpc getUser (UserRequest) returns (UserResponse);
 }
 
 // The request message containing the user's name.
@@ -27,7 +27,7 @@ message UserResponse {
 
 
 service ChatService {
-    rpc chat(stream ChatMessage) returns (stream ChatMessageFromService);
+    rpc chat (stream ChatMessage) returns (stream ChatMessageFromService);
 }
 
 message ChatMessage {
