@@ -7,28 +7,35 @@ import io.grpc.ServerBuilder
 import io.grpc.protobuf.services.ProtoReflectionService
 
 fun main(args: Array<String>) {
-  val registry = SemanticMetricRegistry()
-  val chatService = ChatService()
-  val server = ServerBuilder
-      .forPort(15001)
-      .intercept(SemanticMetricServerInterceptor(registry))
-      .intercept(ServerLimits.simpleServerLimiter(registry))
-      .addService(ProtoReflectionService.newInstance())
-      .addService(UserService())
-      .addService(chatService)
-      .build()
+    GrpcServer.grpcServer()
+}
 
-  Runtime.getRuntime().addShutdownHook(Thread {
-    println("Ups, JVM shutdown")
+object GrpcServer {
 
-    chatService.shutdown()
-    server.shutdown()
-    server.awaitTermination()
+    fun grpcServer() {
+        val registry = SemanticMetricRegistry()
+        val chatService = ChatService()
+        val server = ServerBuilder
+            .forPort(15001)
+            .intercept(SemanticMetricServerInterceptor(registry))
+            .intercept(ServerLimits.simpleServerLimiter(registry))
+            .addService(ProtoReflectionService.newInstance())
+            .addService(UserService())
+            .addService(chatService)
+            .build()
 
-    println("User service stopped")
-  })
+        Runtime.getRuntime().addShutdownHook(Thread {
+            println("Ups, JVM shutdown")
 
-  server.start()
-  println("User service started")
-  server.awaitTermination()
+            chatService.shutdown()
+            server.shutdown()
+            server.awaitTermination()
+
+            println("User service stopped")
+        })
+
+        server.start()
+        println("User service started")
+        server.awaitTermination()
+    }
 }
