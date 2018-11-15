@@ -34,7 +34,6 @@ object GrpcServer {
         val server = ServerBuilder
             .forPort(15001)
             .addService(ProtoReflectionService.newInstance())
-            .addService(UserService())
             .addService(chatService)
             .build()
 
