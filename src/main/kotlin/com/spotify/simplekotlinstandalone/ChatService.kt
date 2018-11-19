@@ -29,10 +29,10 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 import services.ChatMessage
 import services.ChatMessageFromService
-import services.ChatServiceGrpcKt
+import services.ChatServiceImplBase
 
 @UseExperimental(ExperimentalCoroutinesApi::class)
-class ChatService : ChatServiceGrpcKt.ChatServiceImplBase() {
+class ChatService : ChatServiceImplBase() {
 
     data class Client(val name: String, val channel: SendChannel<ChatMessageFromService>)
 

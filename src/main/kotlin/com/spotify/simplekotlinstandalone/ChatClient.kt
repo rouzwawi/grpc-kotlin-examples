@@ -26,7 +26,8 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
 import services.ChatMessage
 import services.ChatMessageFromService
-import services.ChatServiceGrpcKt
+import services.ChatServiceGrpc
+import services.chat
 
 fun main(args: Array<String>) {
     ChatClient.chatClient()
@@ -39,7 +40,7 @@ object ChatClient {
             .usePlaintext()
             .build()
 
-        val chatService = ChatServiceGrpcKt.newStub(channel)
+        val chatService = ChatServiceGrpc.newStub(channel)
 
         val chat = chatService.chat()
 
